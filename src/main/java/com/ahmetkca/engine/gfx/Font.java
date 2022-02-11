@@ -2,7 +2,7 @@ package com.ahmetkca.engine.gfx;
 
 public class Font {
     public static final int UNICODE_OFFSET = 0;
-    public static final Font DEFAULT = new Font("/fonts/comic_sans_ms_11.png");
+    public static final Font DEFAULT = new Font("/fonts/arial_11.png");
 
     private Image fontImage;
     private int[] offsets;
