@@ -1,5 +1,8 @@
 package com.ahmetkca.engine;
 
+import com.ahmetkca.utils.Observer;
+import com.ahmetkca.utils.Subject;
+
 import java.awt.event.*;
 
 public class Input implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
@@ -15,8 +18,19 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
     private int mouseX, mouseY;
     private int scroll;
 
+    public void addObserver(Observer obs) {
+        subject.add(obs);
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    private final Subject subject;
+
     public Input(GameContainer gc) {
         this.gc = gc;
+        subject = new Subject();
         mouseX = 0;
         mouseY = 0;
         scroll = 0;
@@ -71,18 +85,21 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener, M
 
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
 
     @Override
     public void keyPressed(KeyEvent e) {
         keys[e.getKeyCode()] = true;
+//        System.out.println(e.getKeyChar() + " " + subject.getObserverList().size());
+
+        subject.setState(e.getKeyChar());
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         keys[e.getKeyCode()] = false;
+
     }
 
     @Override
