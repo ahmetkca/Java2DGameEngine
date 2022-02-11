@@ -37,34 +37,32 @@ public class Renderer {
         }
     }
 
-    private ArrayList<ImageRequest> imageRequests = new ArrayList<>();
-    private ArrayList<LightRequest> lightRequests = new ArrayList<>();
+    private final ArrayList<ImageRequest> imageRequests = new ArrayList<>();
+    private final ArrayList<LightRequest> lightRequests = new ArrayList<>();
 
-    private int pW, pH;
-    private int[] pixelArray;
+    private final int pW;
+    private final int pH;
+    private final int[] pixelArray;
 
     // z buffering for alpha
-    private int[] zBuffer;
+    private final int[] zBuffer;
     private int zDepth = 0;
     private boolean isProcessingAlpha = false;
 
     // lights
-    private int[] lightMap;
-    private int[] lightBlockMap;
-//    private int ambientColor = 0xff232323;
-    private int ambientColor = 0xff000000;
-
+    private final int[] lightMap;
+    private final int[] lightBlockMap;
+    private int ambientColor = 0xff232323;
+//    private int ambientColor = 0xff0a0a10;
 
     // Default font
-    private Font defaultFont = Font.DEFAULT;
+    private final Font defaultFont = Font.DEFAULT;
 
     public Renderer(GameContainer gc) {
         pW = gc.getWIDTH();
         pH = gc.getHEIGHT();
-
         pixelArray = ((DataBufferInt) gc.getWindow().getImage().getRaster().getDataBuffer()).getData();
         zBuffer = new int[pixelArray.length];
-
         lightMap = new int[pixelArray.length];
         lightBlockMap = new int[pixelArray.length];
     }
@@ -77,19 +75,23 @@ public class Renderer {
             lightBlockMap[i] = 0;
         }
     }
-//    public void clear(int color) {
-//        for (int i = 0; i < pixelArray.length; i++) {
-//            pixelArray[i] = color;
-//            zBuffer[i] = 0;
-//        }
-//    }
-//    public void clear(int rgb, int alpha) {
-//        int color = (alpha << 24) + rgb;
-//        for (int i = 0; i < pixelArray.length; i++) {
-//            pixelArray[i] = color;
-//            zBuffer[i] = 0;
-//        }
-//    }
+    public void clear(int color) {
+        for (int i = 0; i < pixelArray.length; i++) {
+            pixelArray[i] = color;
+            zBuffer[i] = 0;
+            lightMap[i] = ambientColor;
+            lightBlockMap[i] = 0;
+        }
+    }
+    public void clear(int rgb, int alpha) {
+        int color = (alpha << 24) + rgb;
+        for (int i = 0; i < pixelArray.length; i++) {
+            pixelArray[i] = color;
+            zBuffer[i] = 0;
+            lightMap[i] = ambientColor;
+            lightBlockMap[i] = 0;
+        }
+    }
 
     public void changePixelAtLightMap(int x, int y, int val) {
         if (x < 0 || x >= pW || y < 0 || y >= pH) return;
@@ -179,7 +181,8 @@ public class Renderer {
 
     public void processAlpha() {
         isProcessingAlpha = true;
-        Collections.sort(imageRequests, (o1, o2) -> {
+        // sort images in the imageRequests list (which are alpha images) based on their z-depth
+        imageRequests.sort((o1, o2) -> {
             if (o1.getzDepth() > o2.getzDepth()) {
                 return 1;
             } else if (o1.getzDepth() < o2.getzDepth()) {
@@ -188,16 +191,16 @@ public class Renderer {
                 return 0;
             }
         });
-        for (int i=0; i< imageRequests.size(); i++) {
-            setzDepth(imageRequests.get(i).getzDepth());
-            drawImage(imageRequests.get(i).getImage(),
-                    imageRequests.get(i).getOffsetX(),
-                    imageRequests.get(i).getOffsetY());
+        // draw each requested alpha image here, so they render before any non-alpha image
+        for (ImageRequest imageRequest : imageRequests) {
+            setzDepth(imageRequest.getzDepth());
+            drawImage(imageRequest.getImage(),
+                    imageRequest.getOffsetX(),
+                    imageRequest.getOffsetY());
         }
 
         //TODO: Draw the lights here
-        for (int i = 0; i < lightRequests.size(); i++) {
-            LightRequest lightRequest = lightRequests.get(i);
+        for (LightRequest lightRequest : lightRequests) {
             drawLightRequest(lightRequest.getLight(),
                     lightRequest.getX(),
                     lightRequest.getY());
@@ -205,12 +208,10 @@ public class Renderer {
 
         // merge original Pixel Array with Light Map array
         for (int i = 0; i < pixelArray.length; i++) {
-//            System.out.println(i);
             // get the rgb values in range 0.0 to 1.0
             float r=((lightMap[i] >> 16) & 0xff) / 255.0f;
             float g=((lightMap[i] >> 8) & 0xff) / 255.0f;
             float b=(lightMap[i] & 0xff) / 255.0f;
-
             pixelArray[i] = (0xff << 24) | (int) (((pixelArray[i] >> 16) & 0xff) * r) << 16 | (int) (((pixelArray[i] >> 8) & 0xff) * g) << 8 | (int)((pixelArray[i] & 0xff) * b);
         }
 
@@ -283,7 +284,6 @@ public class Renderer {
             imageRequests.add(new ImageRequest(image, zDepth, offsetX, offsetY));
             return;
         }
-
         NewBoundary newBoundary = new NewBoundary(0, 0, image.getW(), image.getH());
         newBoundary.calculateNewStart(offsetX, offsetY);
         newBoundary.calculateNewEnd(offsetX, offsetY);
@@ -305,7 +305,6 @@ public class Renderer {
     }
 
     public void drawText(String text, int offsetX, int offsetY, int color) {
-//        text = text.toUpperCase(Locale.ROOT);
         int charOffset = 0;
         for (int i = 0; i < text.length(); i++) {
             int unicode = text.charAt(i) - Font.UNICODE_OFFSET;
@@ -330,7 +329,6 @@ public class Renderer {
         NewBoundary newBoundary = new NewBoundary(0, 0, width, height);
         newBoundary.calculateNewStart(offsetX, offsetY);
         newBoundary.calculateNewEnd(offsetX, offsetY);
-
         for (int y = newBoundary.offScreenY; y < newBoundary.calcNewHeight; y++) {
             for (int x = newBoundary.offScreenX; x < newBoundary.calcNewWidth; x++) {
                 setPixel(x + offsetX, y + offsetY, color);
@@ -497,7 +495,7 @@ public class Renderer {
             }
         } else {
             while (true) {
-                setPixel(x, y, 0xff000000);;
+                setPixel(x, y, 0xff000000);
                 if (y == y2)
                     break;
                 y += iy;
@@ -516,5 +514,13 @@ public class Renderer {
 
     public void setzDepth(int zDepth) {
         this.zDepth = zDepth;
+    }
+
+    public int getAmbientColor() {
+        return ambientColor;
+    }
+
+    public void setAmbientColor(int ambientColor) {
+        this.ambientColor = ambientColor;
     }
 }
