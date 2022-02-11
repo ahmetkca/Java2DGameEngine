@@ -1,30 +1,43 @@
 package com.ahmetkca.engine;
 
+import com.ahmetkca.game.GameManager;
+import com.ahmetkca.utils.Observer;
+import com.ahmetkca.utils.Subject;
+
 public class GameContainer implements Runnable{
 
     private Thread thread;
     private Window window;
+
+    public Renderer getRenderer() {
+        return renderer;
+    }
+
     private Renderer renderer;
     private Input input;
     private Game game;
     private boolean isRunning = false;
     private final double UPDATE_CAP = 1.0/60.0;
 
-    private int WIDTH = (int)(1920f/4), HEIGHT = (int)(1080f/4);
+    public static int WIDTH = (int)(1920f/4), HEIGHT = (int)(1080f/4);
     private float scale = 2f;
     private String title = "AhEngine v1.0";
 
+
     public GameContainer(Game game) {
+
+
         this.game = game;
     }
 
     public void start() {
         window = new Window(this);
+
         renderer = new Renderer(this);
         input = new Input(this);
         thread = new Thread(this);
-
-        thread.run(); // this is going to be main thread
+        game.setSub(input.getSubject());
+        thread.start(); // this is going to be main thread
     }
 
     public void stop() {
@@ -44,6 +57,8 @@ public class GameContainer implements Runnable{
         double frameTime = 0;
         int frames = 0;
         int fps = 0;
+
+        game.init(this);
 
         while (isRunning) {
             render = false;
@@ -128,4 +143,5 @@ public class GameContainer implements Runnable{
     public void setWIDTH(int WIDTH) { this.WIDTH = WIDTH; }
 
     public void setHEIGHT(int HEIGHT) { this.HEIGHT = HEIGHT; }
+
 }
