@@ -13,11 +13,11 @@ public class Light {
         this.color = color;
         diameter = radius * 2;
         lightMap = new int[diameter * diameter];
-
         setupLightMap();
 
     }
     public void setupLightMap() {
+        lightMap = new int[diameter * diameter];
         for (int y = 0; y < diameter; y++) {
             for (int x= 0; x < diameter; x++) {
                 // distance from center of the circle
@@ -39,7 +39,7 @@ public class Light {
 
     public void setRadius(int radius) {
         this.radius = radius;
-        diameter = radius * 2;
+        this.diameter = radius * 2;
         setupLightMap();
     }
 
