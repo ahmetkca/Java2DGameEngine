@@ -8,12 +8,14 @@ import com.ahmetkca.utils.MyRandomGenerator;
 
 public class FlyingWord extends Word {
     public static final int CHAR_WEIGHT = 25;
-//    private final Light light;
+    private final Light light;
     private int points;
 
+    private boolean isCorrectlyEntered = false;
+
     public FlyingWord(float posX, float posY) {
-//        int randomLightColor = (255 << 24) | MyRandomGenerator.getRandomNumberInRange(0,(255 << 16) | (255 << 8) | 255);
-//        light = new Light(50, 0xffffffff);
+        int randomLightColor = (255 << 24) | MyRandomGenerator.getRandomNumberInRange(0,(255 << 16) | (255 << 8) | 255);
+        light = new Light(50, randomLightColor);
         this.posX=posX;
         this.posY=posY;
         this.w=0;
@@ -29,7 +31,7 @@ public class FlyingWord extends Word {
     public Word setWord(String word) {
         super.setWord(word);
         points = CHAR_WEIGHT * word.length();
-//        light.setRadius((int) (getW()/2.0));
+        light.setRadius((int) (getW() + (getW()/4.0)));
         return this;
     }
 
@@ -55,7 +57,7 @@ public class FlyingWord extends Word {
     @Override
     public void render(GameContainer gc, Renderer renderer) {
         renderer.drawText(word, (int) posX, (int) posY, color);
-//        renderer.drawLight(light, (int) (posX + (getW()/2.0)), (int) (posY + (getH()/2)));
+        renderer.drawLight(light, (int) (posX + (getW()/2.0)), (int) (posY + (getH()/2)));
     }
 
     public int getPoints() {
@@ -64,5 +66,13 @@ public class FlyingWord extends Word {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public boolean isCorrectlyEntered() {
+        return isCorrectlyEntered;
+    }
+
+    public void setCorrectlyEntered(boolean correctlyEntered) {
+        isCorrectlyEntered = correctlyEntered;
     }
 }
