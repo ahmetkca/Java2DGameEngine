@@ -9,7 +9,7 @@ public abstract class Word extends GameObject {
     private Image wordImage;
 
     protected String word;
-    protected float speed = 25f;
+    protected float speed = 55f;
     protected int color = 0xff00ff00;
 
     //TODO: word is not font independent
