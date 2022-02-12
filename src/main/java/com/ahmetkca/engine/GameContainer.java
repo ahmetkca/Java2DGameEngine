@@ -5,6 +5,7 @@ import com.ahmetkca.utils.Observer;
 import com.ahmetkca.utils.Subject;
 
 public class GameContainer implements Runnable{
+    public static boolean DEBUG = false;
 
     private Thread thread;
     private Window window;
@@ -25,8 +26,6 @@ public class GameContainer implements Runnable{
 
 
     public GameContainer(Game game) {
-
-
         this.game = game;
     }
 
@@ -89,7 +88,8 @@ public class GameContainer implements Runnable{
                 //TODO: Render the game here
                 game.render(this, renderer);
                 renderer.processAlpha();
-                renderer.drawText("Fps:" + fps, 0, 0, 0xffffffff);
+                if (GameContainer.DEBUG)
+                    renderer.drawText("Fps:" + fps, 0, 0, 0xffffffff);
                 //
                 window.update();
                 frames++;
