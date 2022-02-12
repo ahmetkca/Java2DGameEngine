@@ -39,6 +39,8 @@ public class Light {
 
     public void setRadius(int radius) {
         this.radius = radius;
+        diameter = radius * 2;
+        setupLightMap();
     }
 
     public int getDiameter() {
@@ -47,6 +49,8 @@ public class Light {
 
     public void setDiameter(int diameter) {
         this.diameter = diameter;
+        radius = (int) (diameter / 2.0f);
+        setupLightMap();
     }
 
     public int getColor() {

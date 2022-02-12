@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class WordBank {
     private final String RANDOM_WORD_API = "https://random-word-api.herokuapp.com/word?number=%d";
@@ -17,13 +15,28 @@ public class WordBank {
          init();
     }
     private void init() {
-        words = getRandomWords(5);
+        System.out.println("Initialize WordBank");
+        words = getRandomWords(500);
+//        words.add("boat");
+//        words.add("into");
+//        words.add("other");
+//        words.add("govern");
+//        words.add("inch");
+//        words.add("charm");
+    }
+
+    public Set<String> getRandomUniqueWords(int len) {
+        Set<String> uniqueWords = new HashSet<>();
+        while (uniqueWords.size() != len) {
+            uniqueWords.add(getRandomWord());
+        }
+        return uniqueWords;
     }
 
     private List<String> getRandomWords(int num) {
         List<String> words = new ArrayList<>();
         BufferedReader bufferedReader;
-        StringBuffer responseContent = new StringBuffer();
+        StringBuilder responseContent = new StringBuilder();
         HttpURLConnection connection = null;
         try {
             URL url = new URL(String.format(RANDOM_WORD_API, num));
@@ -41,28 +54,23 @@ public class WordBank {
                 responseContent.append(line);
             }
             String[] splitResult = responseContent.toString().split(",");
-            for (int i = 0; i < splitResult.length; i++) {
-                String word = splitResult[i].replaceAll("\\[", "").replaceAll("\"", "");
+            for (String s : splitResult) {
+                String word = s.replaceAll("\\[", "")
+                        .replaceAll("\"", "")
+                        .replaceAll("]", "");
                 words.add(word);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
-            connection.disconnect();
+            if (connection != null)
+                connection.disconnect();
         }
         return words;
     }
 
     public String getRandomWord() {
-        return words.get(WordBank.getRandomNumberInRange(0, words.size()-1));
-    }
-
-    private static int getRandomNumberInRange(int min, int max) {
-        if (min >= max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
-        Random r = new Random();
-        return r.nextInt((max - min) + 1) + min;
+        return words.get(MyRandomGenerator.getRandomNumberInRange(0, words.size()-1));
     }
 
     public static void main(String[] args) {
