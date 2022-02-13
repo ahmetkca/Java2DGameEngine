@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class SoundClip {
+
     private Clip clip = null;
     private FloatControl gainControl;
 
@@ -76,5 +77,21 @@ public class SoundClip {
 
     public boolean isRunning() {
         return clip.isRunning();
+    }
+
+    public Clip getClip() {
+        return clip;
+    }
+
+    public void setClip(Clip clip) {
+        this.clip = clip;
+    }
+
+    public FloatControl getGainControl() {
+        return gainControl;
+    }
+
+    public void setGainControl(FloatControl gainControl) {
+        this.gainControl = gainControl;
     }
 }

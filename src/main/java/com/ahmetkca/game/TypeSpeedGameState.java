@@ -8,41 +8,46 @@ import com.ahmetkca.utils.WordBankAPI;
 import java.util.*;
 
 public class TypeSpeedGameState {
-    private int MAX_WORDS = 6;
-    private int MAX_Y_POSITION = GameContainer.HEIGHT - (3*Font.DEFAULT.getFontImage().getH());
+    private int MAX_WORDS = 7;
+    private final int MAX_Y_POSITION = GameContainer.HEIGHT - (3*Font.DEFAULT.getFontImage().getH());
+
+
+
+    private final float Y_POS_LOCAL_RANGE = Font.DEFAULT.getFontImage().getH() * 1.25f;
     private final List<String> uniqueWords;
     private final List<Integer> uniqueYPositions;
+    private final HashMap<String, Integer> uniqueWordsAndYpositions;
     private final WordBankAPI wordBankAPI;
 
+    public TypeSpeedGameState(WordBankAPI wordBankAPI, List<String> uniqueWords, List<Integer> uniqueYPositions) {
+        System.out.println(Font.DEFAULT.getFontImage().getH());
+        uniqueWordsAndYpositions = new HashMap<>();
+        this.wordBankAPI = wordBankAPI;
+        this.uniqueWords = uniqueWords;
+        this.uniqueYPositions = uniqueYPositions;
+    }
+
     public TypeSpeedGameState(WordBankAPI wordBankAPI) {
+        System.out.println(Font.DEFAULT.getFontImage().getH());
+        uniqueWordsAndYpositions = new HashMap<>();
         uniqueWords = new ArrayList<>();
         uniqueYPositions = new ArrayList<>();
         this.wordBankAPI = wordBankAPI;
         uniqueWords.addAll( wordBankAPI.getRandomUniqueWords(MAX_WORDS));
-        uniqueYPositions.addAll(createUniqueYPositionSet(MAX_WORDS));
+        while (uniqueYPositions.size() != MAX_WORDS) {
+            uniqueYPositions.add(generateUniqueYPosition());
+        }
+//        uniqueYPositions.addAll(createUniqueYPositionSet(MAX_WORDS));
     }
 
     public boolean checkYpositionUniqueness(int posY, List<Integer> tempUniqYposSet) {
-        int fontHeight = Font.DEFAULT.getFontImage().getH();
         for (Integer i : tempUniqYposSet) {
-            if (posY >= (i - fontHeight)  && posY <= (i + fontHeight)) {
+            System.out.println(i);
+            if (posY >= (i - Y_POS_LOCAL_RANGE)  && posY <= (i + Y_POS_LOCAL_RANGE)) {
                 return false;
             }
         }
         return true;
-    }
-
-    public Set<Integer> createUniqueYPositionSet(int len) {
-        List<Integer> tempSet = new ArrayList<>();
-        while (tempSet.size() != len) {
-            boolean isValid;
-            int randYpos = MyRandomGenerator.getRandomNumberInRange(0, MAX_Y_POSITION);
-            if (!(isValid = checkYpositionUniqueness(randYpos, tempSet)))
-                continue;
-            else
-                tempSet.add(randYpos);
-        }
-        return new HashSet<>(tempSet);
     }
 
     public int generateUniqueYPosition() {
@@ -63,6 +68,41 @@ public class TypeSpeedGameState {
         return false;
     }
 
+    public boolean removeWord(String word) {
+        uniqueWords.remove(word);
+        return true;
+    }
+
+    public boolean removeYpos(int posY) {
+        try {
+            uniqueYPositions.remove(Integer.valueOf(posY));
+        } catch (IndexOutOfBoundsException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public String addUniqueWord() {
+        String t = generateUniqueWord();
+        uniqueWords.add(t);
+        return t;
+    }
+
+    public int addUniqueYpos() {
+        int t = generateUniqueYPosition();
+        uniqueYPositions.add(t);
+        return t;
+    }
+
+    public String generateUniqueWord() {
+        String randWord = wordBankAPI.getRandomWord();
+        while (uniqueWords.contains(randWord)) {
+            randWord = wordBankAPI.getRandomWord();
+        }
+        return randWord;
+    }
+
     public int getMAX_WORDS() {
         return MAX_WORDS;
     }
@@ -81,5 +121,13 @@ public class TypeSpeedGameState {
 
     public WordBankAPI getWordBankAPI() {
         return wordBankAPI;
+    }
+
+    public int getMAX_Y_POSITION() {
+        return MAX_Y_POSITION;
+    }
+
+    public float getY_POS_LOCAL_RANGE() {
+        return Y_POS_LOCAL_RANGE;
     }
 }

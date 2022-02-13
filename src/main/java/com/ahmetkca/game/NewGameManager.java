@@ -13,14 +13,17 @@ import com.ahmetkca.utils.WordBankAPI;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class NewGameManager extends Game {
 
+    private List<SoundClip> scorePointsSoundEffects = new ArrayList<>();
+
     private float totalTime = 1*60;
     private final SoundClip oofSoundEffect;
-    private final SoundClip letsGoSoundClip;
-    private final SoundClip scoringPoint;
+    private final SoundClip letsGoSoundClip = null;
+    private final SoundClip scoringPoint = null;
     private final int MAX_WORDS_IN_SCREEN = 6;
     private final ArrayList<GameObject> gameObjects = new ArrayList<>();
     private final HashMap<String, FlyingWord> uniqueWords;
@@ -33,11 +36,16 @@ public class NewGameManager extends Game {
 
     public NewGameManager() {
 
+        scorePointsSoundEffects.add(new SoundClip("/audio/bonus_points_sound_effect_1.wav"));
+        scorePointsSoundEffects.add(new SoundClip("/audio/bonus_points_sound_effect_2.wav"));
+        scorePointsSoundEffects.add(new SoundClip("/audio/bonus_points_sound_effect_3.wav"));
+        scorePointsSoundEffects.add(new SoundClip("/audio/bonus_points_sound_effect_4.wav"));
+        scorePointsSoundEffects.add(new SoundClip("/audio/bonus_points_sound_effect_5.wav"));
         oofSoundEffect = new SoundClip("/audio/minecraft_oof_sound_effect.wav");
-        letsGoSoundClip = new SoundClip("/audio/dabby_lets_go.wav");
-        letsGoSoundClip.setVolume(0.5f);
-        scoringPoint = new SoundClip("/audio/scoring_point.wav");
-        scoringPoint.setVolume(0.5f);
+//        letsGoSoundClip = new SoundClip("/audio/dabby_lets_go.wav");
+//        letsGoSoundClip.setVolume(0.5f);
+//        scoringPoint = new SoundClip("/audio/scoring_point.wav");
+//        scoringPoint.setVolume(0.5f);
         uniqueWords = new HashMap<>();
         wordBankAPI = new WordBankAPI();
 //        gameObjects.add(new Player(64,64, 16, 16));
@@ -84,12 +92,15 @@ public class NewGameManager extends Game {
                 if (!((FlyingWord) gameObject).isCorrectlyEntered()) {
                     playersScore -= ((FlyingWord) gameObject).getPoints() * (1.0 - (1.0 / (uniqueWords.get(lastCorrectlyEnteredWord).getSpeed())));
 //                    playersScore -= 50;
-                    if (!oofSoundEffect.isRunning())
-                        oofSoundEffect.play();
+//                    if (!oofSoundEffect.isRunning())
+                    oofSoundEffect.play();
                 } else {
                     playersScore += uniqueWords.get(lastCorrectlyEnteredWord).getPoints() * (1.0- (1.0 / (uniqueWords.get(lastCorrectlyEnteredWord).getSpeed())));
-                    if (!scoringPoint.isRunning())
-                        scoringPoint.play();
+
+//                    if (!sc.isRunning())
+                    scorePointsSoundEffects.get(MyRandomGenerator.getRandomNumberInRange(0, scorePointsSoundEffects.size()-1)).play();
+//                    if (!scoringPoint.isRunning())
+//                        scoringPoint.play();
                 }
                 gameObjects.remove(i);
                 --i;
