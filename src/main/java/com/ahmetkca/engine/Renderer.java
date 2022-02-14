@@ -6,7 +6,6 @@ import com.ahmetkca.engine.gfx.*;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
-import java.util.Collections;
 
 
 public class Renderer {

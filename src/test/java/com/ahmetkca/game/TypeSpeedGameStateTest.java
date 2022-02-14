@@ -142,10 +142,4 @@ class TypeSpeedGameStateTest {
             assertNotEquals(15, i);
         }
     }
-
-    @DisplayName("")
-    @Test
-    public void test_Create_Unique_Y_Position_Set()  {
-
-    }
 }

@@ -15,10 +15,10 @@ public class FlyingWord extends Word {
 
     public FlyingWord(String word, float posX, float posY) {
         this.word=word;
-        int randomLightColor = (255 << 24) | MyRandomGenerator.getRandomNumberInRange(0,(255 << 16) | (255 << 8) | 255);
+//        int randomLightColor = (255 << 24) | MyRandomGenerator.getRandomNumberInRange(0,(255 << 16) | (255 << 8) | 255);
         this.w=calculateWidth(word);
         this.h=Font.DEFAULT.getFontImage().getH();
-        light = new Light((int)( w + (w/4.0)), randomLightColor);
+        light = new Light((int)( w + (w/2.0)), 0xffffffff);
         light.setColor((255 << 24 ) | ((255 - (color >> 16) & 0xff) << 16) | ((255 - (color >> 8) & 0xff) << 8) | (255 - (color & 0xff)) );
         points = CHAR_WEIGHT * word.length();
         this.posX=posX;
@@ -26,9 +26,9 @@ public class FlyingWord extends Word {
     }
 
     public FlyingWord(float posX, float posY) {
-        int randomLightColor = (255 << 24) | MyRandomGenerator.getRandomNumberInRange(0,(255 << 16) | (255 << 8) | 255);
-        light = new Light(50, randomLightColor);
-        light.setColor((255 << 24 ) | ((255 - (color >> 16) & 0xff) << 16) | ((255 - (color >> 8) & 0xff) << 8) | (255 - (color & 0xff)) );
+//        int randomLightColor = (255 << 24) | MyRandomGenerator.getRandomNumberInRange(0,(255 << 16) | (255 << 8) | 255);
+        light = new Light((int)( w + (w/2.0)), 0xffffffff);
+//        light.setColor((255 << 24 ) | ((255 - (color >> 16) & 0xff) << 16) | ((255 - (color >> 8) & 0xff) << 8) | (255 - (color & 0xff)) );
         this.posX=posX;
         this.posY=posY;
         this.w=0;
@@ -53,7 +53,7 @@ public class FlyingWord extends Word {
         if (posX > GameContainer.WIDTH)
             this.setDead(true);
         changeColor((int) posX, dt);
-        light.setColor((255 << 24 ) | ((255 - (color >> 16) & 0xff) << 16) | ((255 - (color >> 8) & 0xff) << 8) | (255 - (color & 0xff)) );
+//        light.setColor((255 << 24 ) | ((255 - (color >> 16) & 0xff) << 16) | ((255 - (color >> 8) & 0xff) << 8) | (255 - (color & 0xff)) );
         posX += (dt*speed);
     }
     private void changeColor(int postX, float dt) {
@@ -70,9 +70,11 @@ public class FlyingWord extends Word {
 
     @Override
     public void render(GameContainer gc, Renderer renderer) {
-        renderer.drawText(word, (int) posX, (int) posY, color);
+        renderer.drawText(word,
+                (int) posX + MyRandomGenerator.getRandomNumberInRange(-1, 1),
+                (int) posY + MyRandomGenerator.getRandomNumberInRange(-1, 1), color);
 //        renderer.drawText("" + posY, (int)(posX + (getW()/2.0)), (int) (posY + Font.DEFAULT.getFontImage().getH()), 0xffffffff);
-//        renderer.drawLight(light, (int) (posX + (getW()/2.0)), (int) (posY + (getH()/2)));
+        renderer.drawLight(light, (int) (posX + (getW()/2.0)), (int) (posY + (getH()/2)));
     }
 
     public int getPoints() {

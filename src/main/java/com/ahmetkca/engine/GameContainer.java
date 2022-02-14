@@ -9,19 +9,15 @@ public class GameContainer implements Runnable{
 
     private Thread thread;
     private Window window;
-
-    public Renderer getRenderer() {
-        return renderer;
-    }
-
     private Renderer renderer;
     private Input input;
-    private Game game;
+    private final Game game;
     private boolean isRunning = false;
     private final double UPDATE_CAP = 1.0/60.0;
 
-    public static int WIDTH = (int)(1920f/4), HEIGHT = (int)(1080f/4);
-    private float scale = 2f;
+//    public static int WIDTH = (int)(1920f/4), HEIGHT = (int)(1080f/4);
+    public static int WIDTH = 0, HEIGHT = 0;
+    private static float scale = 0f;
     private String title = "AhEngine v1.0";
 
 
@@ -120,8 +116,8 @@ public class GameContainer implements Runnable{
         return scale;
     }
 
-    public void setScale(float scale) {
-        this.scale = scale;
+    public static void setScale(float scale) {
+        GameContainer.scale = scale;
     }
 
     public String getTitle() {
@@ -140,8 +136,12 @@ public class GameContainer implements Runnable{
         return input;
     }
 
-    public void setWIDTH(int WIDTH) { this.WIDTH = WIDTH; }
+    public static void setWIDTH(int WIDTH) { GameContainer.WIDTH = WIDTH; }
 
-    public void setHEIGHT(int HEIGHT) { this.HEIGHT = HEIGHT; }
+    public static void setHEIGHT(int HEIGHT) { GameContainer.HEIGHT = HEIGHT; }
+
+    public Renderer getRenderer() {
+        return renderer;
+    }
 
 }

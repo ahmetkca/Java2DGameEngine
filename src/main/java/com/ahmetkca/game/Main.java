@@ -8,11 +8,12 @@ import java.awt.event.KeyEvent;
 public class Main {
 
     public static void main(String[] args) {
+        GameContainer.setWIDTH(320);
+        GameContainer.setHEIGHT(240);
+        GameContainer.setScale(3.5f);
         Game game = new NewGameManagerWithTypeSpeedGameState();
+//        Game game = new TestGameManager();
         GameContainer gc = new GameContainer(game);
-        gc.setWIDTH(320);
-        gc.setHEIGHT(240);
-        gc.setScale(4f);
         gc.start();
     }
 }

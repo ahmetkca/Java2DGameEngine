@@ -40,15 +40,17 @@ public abstract class Word extends GameObject {
         return speed;
     }
 
-    public void setSpeed(float speed) {
+    public Word setSpeed(float speed) {
         this.speed = speed;
+        return this;
     }
 
     public int getColor() {
         return color;
     }
 
-    public void setColor(int color) {
+    public Word setColor(int color) {
         this.color = color;
+        return this;
     }
 }
