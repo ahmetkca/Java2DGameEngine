@@ -62,7 +62,7 @@ public class SoundClip {
         play();
     }
 
-    public void setVolume(float volVal) {
+    public SoundClip setVolume(float volVal) {
         if (volVal > 1.0f)
             volVal = 1.0f;
         if (volVal < 0)
@@ -72,7 +72,7 @@ public class SoundClip {
         float newVol = (range * volVal) + gainControl.getMinimum();
         System.out.println("range = " + range + "   " + newVol);
         gainControl.setValue(newVol);
-
+        return this;
     }
 
     public boolean isRunning() {
@@ -83,15 +83,17 @@ public class SoundClip {
         return clip;
     }
 
-    public void setClip(Clip clip) {
+    public SoundClip setClip(Clip clip) {
         this.clip = clip;
+        return this;
     }
 
     public FloatControl getGainControl() {
         return gainControl;
     }
 
-    public void setGainControl(FloatControl gainControl) {
+    public SoundClip setGainControl(FloatControl gainControl) {
         this.gainControl = gainControl;
+        return this;
     }
 }
